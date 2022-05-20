@@ -1,3 +1,8 @@
+variable "create_resource_group" {
+  description = "Whether to create resource group and use it for all networking resources"
+  default     = true
+}
+
 variable "resource_group_name" {
   description = "A container that holds related resources for an Azure solution"
   default     = ""
@@ -8,9 +13,19 @@ variable "location" {
   default     = ""
 }
 
+variable "resource_prefix" {
+  description = "(Optional) Prefix to use for all resoruces created (Defaults to resource_group_name)"
+  default     = ""
+}
+
 variable "virtual_network_name" {
   description = "The name of the virtual network"
   default     = ""
+}
+
+variable "virtual_network_resource_group_name" {
+  description = "The name of the resource group that containers the virtual network (default to virtual machine resoure group)"
+  default     = null
 }
 
 variable "subnet_name" {
@@ -41,11 +56,6 @@ variable "public_ip_sku" {
 variable "domain_name_label" {
   description = "Label for the Domain Name. Will be used to make up the FQDN. If a domain name label is specified, an A DNS record is created for the public IP in the Microsoft Azure DNS system."
   default     = null
-}
-
-variable "public_ip_availability_zone" {
-  description = "The availability zone to allocate the Public IP in. Possible values are `Zone-Redundant`, `1`,`2`, `3`, and `No-Zone`"
-  default     = "Zone-Redundant"
 }
 
 variable "public_ip_sku_tier" {
@@ -119,6 +129,11 @@ variable "virtual_machine_name" {
 
 variable "instances_count" {
   description = "The number of Virtual Machines required."
+  default     = 1
+}
+
+variable "network_interface_instances_count" {
+  description = "The number of Network Interfces per Virtual Machines required."
   default     = 1
 }
 
@@ -709,10 +724,10 @@ variable "enable_boot_diagnostics" {
   default     = false
 }
 
-variable "storage_account_uri" {
-  description = "The Primary/Secondary Endpoint for the Azure Storage Account which should be used to store Boot Diagnostics, including Console Output and Screenshots from the Hypervisor. Passing a `null` value will utilize a Managed Storage Account to store Boot Diagnostics."
-  default     = null
-}
+# variable "storage_account_uri" {
+#   description = "The Primary/Secondary Endpoint for the Azure Storage Account which should be used to store Boot Diagnostics, including Console Output and Screenshots from the Hypervisor. Passing a `null` value will utilize a Managed Storage Account to store Boot Diagnostics."
+#   default     = null
+# }
 
 variable "data_disks" {
   description = "Managed Data Disks for azure viratual machine"
@@ -729,23 +744,43 @@ variable "nsg_diag_logs" {
   default     = ["NetworkSecurityGroupEvent", "NetworkSecurityGroupRuleCounter"]
 }
 
-variable "log_analytics_workspace_id" {
-  description = "The name of log analytics workspace resource id"
+variable "log_analytics_workspace_name" {
+  description = "The name of the log analytics workspace"
   default     = null
 }
 
-variable "log_analytics_customer_id" {
-  description = "The Workspace (or Customer) ID for the Log Analytics Workspace."
+variable "log_analytics_workspace_resouce_group_name" {
+  description = "The name of the resource group that contains the log analytics workspace"
   default     = null
 }
 
-variable "log_analytics_workspace_primary_shared_key" {
-  description = "The Primary shared key for the Log Analytics Workspace"
+variable "log_analytics_workspace_storage_account_id" {
+  description = "The name of the id of storage account that is used for the log analytics workspace"
   default     = null
+}
+
+variable "create_storage_account" {
+  description = "Indicate if the storage account should be created"
+  default     = true
 }
 
 variable "storage_account_name" {
-  description = "The name of the hub storage account to store logs"
+  description = "The name of the storage account used for storing virtal hard disks"
+  default     = "vhds"
+}
+
+variable "storage_account_tier_type" {
+  description = "The storage account tier (used only when creating a new storage account)"
+  default     = "Standard"
+}
+
+variable "storage_account_replication_type" {
+  description = "The type of replication for the storage account (used only when creating a new storage account)"
+  default     = "ZRS"
+}
+
+variable "storage_account_resource_group_name" {
+  description = "The resource group that contains the storage account"
   default     = null
 }
 
